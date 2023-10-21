@@ -1,3 +1,3 @@
 # Puhelinluettelo
 
-## Tehtävät 2.6 - 2.15
+## Tehtävät 2.6 - 2.17
