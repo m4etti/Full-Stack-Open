@@ -1,7 +1,7 @@
 import CountryList from "./CountryList"
 import SingleCountry from "./SingeCountry"
 
-const Results = ({ matches, info }) => {
+const Results = ({ matches, info, buttonClick }) => {
     if (matches.length > 10) {
         return (
             <div>
@@ -19,7 +19,7 @@ const Results = ({ matches, info }) => {
     else {
         return (
             <div>
-                <CountryList countries={matches} />
+                <CountryList countries={matches} buttonClick={buttonClick} />
             </div>
         )
     }

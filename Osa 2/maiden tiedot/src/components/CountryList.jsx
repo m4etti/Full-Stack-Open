@@ -1,9 +1,9 @@
-const CountryList = ({ countries }) => {
+const CountryList = ({ countries, buttonClick}) => {
 
     return (
         <ul>
             {countries.map(country => (
-                <li key={country}>{country}</li>
+                <li key={country}>{country} <button onClick={() => buttonClick(country)}>Show</button> </li>
             ))}
         </ul>
     )

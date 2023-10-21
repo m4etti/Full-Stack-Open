@@ -1,5 +1,4 @@
-const Search = ({ onChange}) => {
-
+const Search = ({ onChange, filter}) => {
     return (
         <div>
             <p>

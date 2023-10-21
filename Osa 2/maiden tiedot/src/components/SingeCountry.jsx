@@ -1,4 +1,4 @@
-// import "./SingeCountry.css"
+import Weather from "./Weather"
 
 const SingleCountry = ({ info }) => {
     if (info) {
@@ -14,9 +14,10 @@ const SingleCountry = ({ info }) => {
                     ))}
                 </ul>
                 <div>
-                    <p style={{fontSize: "100px"}}>{info.flag}</p>
+                    <p style={{ fontSize: "100px" }}>{info.flag}</p>
                     <p >(windows ei tue lippu emojeita oikein)</p>
                 </div>
+                <Weather info={info.weather}/>
             </div>
         )
     }
