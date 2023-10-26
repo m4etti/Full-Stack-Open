@@ -1,7 +1,7 @@
 // Import necessary modules
 require('dotenv').config()
-const express = require('express');
-const morgan = require('morgan');
+const express = require('express')
+const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
@@ -25,9 +25,9 @@ const errorHandler = (error, request, response, next) => {
 }
 
 // Define a custom morgan token for logging request data
-morgan.token('data', (request, response) => {
-    return JSON.stringify(request.body);
-});
+morgan.token('data', (request) => {
+    return JSON.stringify(request.body)
+})
 
 // Middleware setup
 app.use(express.static('dist'))
@@ -48,8 +48,8 @@ app.get('/info', (request, response) => {
         second: '2-digit',
         timeZoneName: 'short',
         hour12: false
-    };
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(new Date());
+    }
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(new Date())
 
     // Respond with API info
     Person.find({}).then(persons => {
@@ -79,7 +79,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 // Delete a person by their ID
 app.delete('/api/persons/:id', (request, response, next) => {
-    Person.findByIdAndRemove(request.params.id).then(result => {
+    Person.findByIdAndRemove(request.params.id).then(() => {
         response.status(204).end()
     })
         .catch(error => next(error))
@@ -113,9 +113,9 @@ app.put('/api/persons/:id', (request, response, next) => {
             // Check if updatedPerson is null (person not found in the database)
             if (!updatedPerson) {
                 // Create a custom error and pass it to the next middleware
-                const error = new Error();
-                error.name = 'NotFoundError';
-                throw error;
+                const error = new Error()
+                error.name = 'NotFoundError'
+                throw error
             }
             response.json(updatedPerson)
         })
