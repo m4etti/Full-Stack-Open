@@ -58,7 +58,9 @@ const App = () => {
           .then(initialPersons => {
             // Update the persons state with the updated person
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : initialPersons))
-            console.log(`Person  ${existingPerson.name} was edited`)
+          setNewName("")
+          setNewNumber("")
+          console.log(`Person  ${existingPerson.name} was edited`)
           })
           .catch(error => {
             console.error(`Error editting person: ${error}`)
