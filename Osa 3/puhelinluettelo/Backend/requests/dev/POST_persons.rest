@@ -1,7 +1,37 @@
+###  ###
 POST http://localhost:3001/api/persons/
 Content-Type: application/json
 
 {
     "name": "Matti Voutilainen",
     "number": "040-5053953"
+}
+
+
+### jotain ###
+POST http://localhost:3001/api/persons/
+Content-Type: application/json
+
+{
+    "name": "Pekka Kukko",
+    "number": "040-8763953"
+}
+
+###  ###
+POST http://localhost:3001/api/persons/
+Content-Type: application/json
+
+{
+    "name": "Erkki Pesonen",
+    "number": "040-6564354"
+}
+
+
+### jotain ###
+POST http://localhost:3001/api/persons/
+Content-Type: application/json
+
+{
+    "name": "Pekka Kukko",
+    "number": "040-7654567"
 }

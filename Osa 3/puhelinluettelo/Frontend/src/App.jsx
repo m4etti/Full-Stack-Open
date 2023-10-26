@@ -58,13 +58,13 @@ const App = () => {
           .then(initialPersons => {
             // Update the persons state with the updated person
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : initialPersons))
-          setNewName("")
-          setNewNumber("")
-          console.log(`Person  ${existingPerson.name} was edited`)
+            setNewName("")
+            setNewNumber("")
+            console.log(`Person  ${existingPerson.name} was edited`)
           })
           .catch(error => {
-            console.error(`Error editting person: ${error}`)
-            setNotification({ text: `Error editting person: ${newName}`, type: "error" })
+            setNotification({ text: error.response.data.error, type: "error" })
+            console.log(error.response.data)
             setRefreshNeeded(true) // Trigger data refresh after an error
           })
 
@@ -78,6 +78,10 @@ const App = () => {
           setNewNumber("")
           console.log(`person ${JSON.stringify(personObject)} added`)
         })
+          .catch(error => {
+            setNotification({ text: error.response.data.error, type: "error" })
+            console.log(error.response.data)
+          })
       }
     }
     else {
