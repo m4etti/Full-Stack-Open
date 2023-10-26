@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors')
 
 const app = express()
 
@@ -26,12 +27,13 @@ const generateId = () => {
 }
 
 morgan.token('data', (req, res) => {
-    return JSON.stringify(req.body); // Tässä oletetaan, että POST-pyyntöjen data on JSON-muodossa
+    return JSON.stringify(req.body); 
 });
 
+app.use(express.static('dist'))
+app.use(cors())
 app.use(express.json())
 //app.use(requestLogger)
-//app.use(morgan('tiny'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 
 let persons = [
@@ -123,7 +125,7 @@ app.post('/api/persons', (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
