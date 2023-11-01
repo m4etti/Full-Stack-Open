@@ -55,6 +55,20 @@ describe('POST /api/blogs', () => {
         const response = await api.post('/api/blogs').send(newBlog)
         expect(response.body.likes).toEqual(0)
     })
+
+    test('if title or author missin code 400 ', async () => {
+        const blogWhitoutTitle = {
+            author: 'test test',
+            url: 'http://test.com',
+        }
+        const blogWhitoutAuthor = {
+            title: 'Test blog',
+            url: 'http://test.com',
+        }
+
+        await api.post('/api/blogs').send(blogWhitoutTitle).expect(400)
+        await api.post('/api/blogs').send(blogWhitoutAuthor).expect(400)
+    })
 })
 
 
