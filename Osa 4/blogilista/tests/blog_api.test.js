@@ -12,26 +12,37 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
-describe('GET /api/blogs', () => {
-    test('blogs are returned as json', async () => {
-        await api
-            .get('/api/blogs')
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
-    })
+test('GET /api/blogs', async () => {
+    await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
 
-    test('all blogs are returned', async () => {
-        const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs')
 
-        expect(response.body).toHaveLength(helper.initialBlogs.length)
-    })
-
-    test('id field named correctly', async () => {
-        const response = await api.get('/api/blogs')
-        expect(response.body[0].id).toBeDefined()
-    })
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+    expect(response.body[0].id).toBeDefined()
 })
 
+test('POST /api/blogs', async () => {
+    const newBlog = {
+        title: 'Test blog',
+        author: 'test test',
+        url: 'http://test.com',
+        likes: 2,
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+    const blogs = blogsAtEnd.map(blog => blog.title)
+    expect(blogs).toContain('Test blog')
+})
 
 
 afterAll(async () => {
