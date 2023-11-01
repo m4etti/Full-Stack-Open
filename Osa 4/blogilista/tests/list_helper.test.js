@@ -72,8 +72,8 @@ describe('total likes', () => {
 })
 
 describe('favorite blog', () => {
-    test('of empty list is {}', () => {
-        expect(listHelper.favoriteBlog([])).toEqual({})
+    test('of empty list is null', () => {
+        expect(listHelper.favoriteBlog([])).toBeNull()
     })
 
     test('when list has only one blog it is the favorite', () => {
@@ -82,9 +82,26 @@ describe('favorite blog', () => {
         expect(listHelper.favoriteBlog([blogs[0]])).toEqual(answer)
     })
 
-    test('of a bigger list is rigth favorite', () => {
+    test('of a bigger list the favorite is the rigth one', () => {
         const { title, author, likes } = blogs[2]
         const answer = { title, author, likes }
         expect(listHelper.favoriteBlog(blogs)).toEqual(answer)
     })
 })
+
+describe('most blogs', () => {
+    test('of an empty list should return null', () => {
+        expect(listHelper.mostBlogs([])).toBeNull()
+    })
+
+    test('of a list with single blog should return its blogger', () => {
+        const answer = { author: blogs[0].author, blogs: 1 }
+        expect(listHelper.mostBlogs([blogs[0]])).toEqual(answer)
+    })
+
+    test('of a bigger list the record blogger is rigth', () => {
+        const answer = { author: 'Robert C. Martin', blogs: 3 }
+        expect(listHelper.mostBlogs(blogs)).toEqual(answer)
+    })
+})
+
