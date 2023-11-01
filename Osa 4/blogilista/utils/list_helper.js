@@ -34,7 +34,6 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-    console.log(blogs.length)
     if (blogs.length === 0) {
         return null
     } else {
@@ -44,9 +43,24 @@ const mostBlogs = (blogs) => {
     }
 }
 
+const mostLikes = (blogs) => {
+    if (blogs.length === 0) {
+        return null
+    } else {
+        const reducer = (totallikes, blog) => totallikes + blog.likes
+        const authors = _.groupBy(blogs, 'author')
+        const mostLikedBlogger = _.maxBy(Object.values(authors), author => (
+            author.reduce(reducer, 0)
+        ))
+        const totalLikes = mostLikedBlogger.reduce(reducer, 0)
+        return { author: mostLikedBlogger[0].author, likes: totalLikes }
+    }
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
