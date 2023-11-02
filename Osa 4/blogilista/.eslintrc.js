@@ -40,5 +40,8 @@ module.exports = {
     },
     'settings': {
         'editor.formatOnSave': true
-    }
+    },
+    // "eslint.rules.customizations": [
+    //     { "rule": "*", "severity": "warn" },
+    // ]
 }

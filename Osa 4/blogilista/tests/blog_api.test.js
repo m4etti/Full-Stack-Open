@@ -12,17 +12,43 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
-test('GET /api/blogs', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('GET /api/blogs', () => {
+    test('GET all', async () => {
+        const response = await api.get('/api/blogs')
 
-    const response = await api.get('/api/blogs')
+        expect(response.status).toBe(200)
+        expect(response.headers['content-type']).toMatch(/application\/json/)
+        expect(response.body).toHaveLength(helper.initialBlogs.length)
+        expect(response.body[0].id).toBeDefined()
+    })
 
-    expect(response.body).toHaveLength(helper.initialBlogs.length)
-    expect(response.body[0].id).toBeDefined()
+    describe('GET /api/blogs/:id', () => {
+        test('valid id', async () => {
+            const blogsInDb = await helper.blogsInDb()
+            const id = blogsInDb[1].id
+            const response = await api.get(`/api/blogs/${id}`)
+
+            expect(response.status).toBe(200)
+            expect(response.headers['content-type']).toMatch(/application\/json/)
+            expect(response.body).toEqual(blogsInDb[1])
+        })
+
+        test('malformed id', async () => {
+            const malformedId = '564564564'
+            const responseMalformedId = await api.get(`/api/blogs/${malformedId}`)
+            expect(responseMalformedId.status).toBe(400)
+        })
+
+        test('non-existent id', async () => {
+            const nonExistentId = '6540da7345d6422ea10b062e'
+            const responseNonExistentId = await api.get(`/api/blogs/${nonExistentId}`)
+            expect(responseNonExistentId.status).toBe(404)
+        })
+    })
+
 })
+
+
 
 describe('POST /api/blogs', () => {
     test('new blog is added', async () => {
@@ -71,6 +97,67 @@ describe('POST /api/blogs', () => {
     })
 })
 
+
+describe('DELETE /api/blogs/:id', () => {
+    test('wanted blog is removed', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const id = blogsAtStart[1].id
+
+        await api
+            .delete(`/api/blogs/${id}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        const titlesAtEnd = blogsAtEnd.map(blog => blog.title)
+
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+        expect(titlesAtEnd).not.toContain(blogsAtStart[1].title)
+    })
+
+    test('malformed id gives 400', async () => {
+        const id = '4353'
+        await api.delete(`/api/blogs/${id}`).expect(400)
+    })
+
+    test('non-existent id gives 400', async () => {
+        const id = '6540da7345d6422ea10b062e'
+        await api.delete(`/api/blogs/${id}`).expect(400)
+    })
+})
+
+describe('PUT /api/blogs/:id', () => {
+    test('wanted blog is edited', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const id = blogsAtStart[1].id
+        const likes = { likes: 100000 }
+
+        await api
+            .put(`/api/blogs/${id}`)
+            .send(likes)
+            .expect(200)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+        expect(blogsAtEnd[1].likes).toEqual(100000)
+    })
+
+    test('malformed id gives 400', async () => {
+        const id = '4353'
+        const likes = { likes: 100000 }
+        await api.put(`/api/blogs/${id}`)
+            .send(likes)
+            .expect(400)
+    })
+
+    test('non-existent id gives 400', async () => {
+        const id = '6540da7345d6422ea10b062e'
+        const likes = { likes: 100000 }
+        await api.put(`/api/blogs/${id}`)
+            .send(likes)
+            .expect(404)
+    })
+})
 
 afterAll(async () => {
     await mongoose.connection.close()
