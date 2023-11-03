@@ -56,7 +56,7 @@ describe('POST /api/blogs', () => {
             title: 'Test blog',
             author: 'test test',
             url: 'http://test.com',
-            likes: 2,
+            likes: 2
         }
         await api
             .post('/api/blogs')
@@ -68,7 +68,7 @@ describe('POST /api/blogs', () => {
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
         const blogs = blogsAtEnd.map(blog => blog.title)
-        expect(blogs).toContain('Test blog')
+        expect(blogs).toContain(newBlog.title)
     })
 
     test('if likes not given 0 likes', async () => {
