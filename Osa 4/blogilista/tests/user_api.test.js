@@ -22,7 +22,7 @@ describe('GET /apia/users', () => {
     })
 })
 
-describe('PUT /api/users', () => {
+describe('POST /api/users', () => {
     test('creation succeeds with a fresh username', async () => {
         const usersAtStart = await helper.usersInDb()
 
@@ -39,30 +39,38 @@ describe('PUT /api/users', () => {
             .expect('Content-Type', /application\/json/)
 
         const usersAtEnd = await helper.usersInDb()
+        console.log(usersAtEnd)
         expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
         const usernames = usersAtEnd.map(u => u.username)
         expect(usernames).toContain(newUser.username)
     })
 
-    test('creation fails with proper statuscode and message if username already taken', async () => {
+    test('creation fails with proper statuscode and message if username already taken or username or password missing', async () => {
         const usersAtStart = await helper.usersInDb()
-
-        const newUser = {
-            username: 'root',
-            name: 'Superuser',
+        const shortUsername = {
+            username: 'm',
+            name: 'Matti Luukkainen',
             password: 'salainen',
         }
+        const noUsername = {
+            name: 'Matti Luukkainen',
+            password: 'salainen',
+        }
+        const shortPassword = {
+            username: 'mluukkai',
+            name: 'Matti Luukkainen',
+            password: '1',
+        }
+        const noPasword = {
+            username: 'mluukkai',
+            name: 'Matti Luukkainen',
+        }
 
-        const result = await api
-            .post('/api/users')
-            .send(newUser)
-            .expect(400)
-            .expect('Content-Type', /application\/json/)
-
-        expect(result.body.error).toContain('expected `username` to be unique')
-
-        const usersAtEnd = await helper.usersInDb()
-        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+        helper.invalidUserFields(usersAtStart[0], 'expected `username` to be unique', api)
+        helper.invalidUserFields(shortUsername, '`) is shorter than', api)
+        helper.invalidUserFields(noUsername, 'Path `username` is required.', api)
+        helper.invalidUserFields(shortPassword, 'Password is shorter than', api)
+        helper.invalidUserFields(noPasword, 'Password is required', api)
     })
 })

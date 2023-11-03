@@ -65,9 +65,24 @@ const usersInDb = async () => {
     return users.map(u => u.toJSON())
 }
 
+const invalidUserFields = async (input, error, api) => {
+    const usersAtStart = await usersInDb()
+    const result = await api
+        .post('/api/users')
+        .send(input)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    expect(result.body.error).toContain(error)
+}
+
+
 module.exports = {
     initialBlogs,
     blogsInDb,
     initialUsers,
-    usersInDb
+    usersInDb,
+    invalidUserFields
 }
