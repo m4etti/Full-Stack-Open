@@ -2,6 +2,15 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 require('express-async-errors')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = request => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+        return authorization.replace('Bearer ', '')
+    }
+    return null
+}
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', { blogs: 0 })
@@ -20,13 +29,16 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
 
-    const user = await User.findById(body.userId)
-
-    if (!body.author || !body.title) {
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: 'token invalid' })
+    }
+    else if (!body.author || !body.title) {
         response.status(400).json({ error: 'Author and title are required fields' })
     }
     else {
+        const user = await User.findById(decodedToken.id)
         const blog = new Blog({
             title: body.title,
             author: body.author,

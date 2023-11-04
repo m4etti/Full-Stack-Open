@@ -1,10 +1,11 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpbmVuIiwiaWQiOiI2NTQ1ZTMwY2MwZWE1NjVmYzUzODk1NTEiLCJpYXQiOjE2OTkwNzkxMTN9.hL9xzdixfhvp9YmzqC7Uot5IjYT7lncrm8mSLTEJULQ
+
 
 {
-    "title": "Sample Blog",
-    "author": "Jane Doe",
+    "title": "Jokin Blogi n.1",
+    "author": "Matti Luukainen",
     "url": "https://example.com",
-    "likes": 100,
-    "userId": "6544be1d20cc0123c1231816"
+    "likes": 100
 }
