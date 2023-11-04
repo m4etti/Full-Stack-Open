@@ -1,0 +1,20 @@
+GET http://localhost:3001/api/blogs
+
+###
+
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1BZXR0aSIsImlkIjoiNjU0NWUzMjNjMGVhNTY1ZmM1Mzg5NTU1IiwiaWF0IjoxNjk5MDg2MTU5fQ.w1F-Xp-5jCLItyXP66YTwXlPiBC-gGz8gavK9UoNPnM
+
+
+{
+    "title": "MAETIN blogi nr 2",
+    "author": "Matti Voutilainen",
+    "url": "https://example.com",
+    "likes": 100
+}
+
+###
+
+DELETE http://localhost:3001/api/blogs/6545ff85b3e6b886bf3080a6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1BZXR0aSIsImlkIjoiNjU0NWUzMjNjMGVhNTY1ZmM1Mzg5NTU1IiwiaWF0IjoxNjk5MDg2MTU5fQ.w1F-Xp-5jCLItyXP66YTwXlPiBC-gGz8gavK9UoNPnM
