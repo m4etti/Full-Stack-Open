@@ -1,5 +1,6 @@
 const logger = require('./logger')
 
+// Middleware for logging incoming requests
 const requestLogger = (request, response, next) => {
     logger.info('Method:', request.method)
     logger.info('Path:  ', request.path)
@@ -8,10 +9,13 @@ const requestLogger = (request, response, next) => {
     next()
 }
 
-const unknownEndpoint = (request, response) => {
+// Middleware for handling unknown endpoints
+const unknownEndpoint = (request, response, next) => {
     response.status(404).send({ error: 'unknown endpoint' })
+    next()
 }
 
+// Middleware for handling errors in the application
 const errorHandler = (error, request, response, next) => {
     logger.error(error.message)
 
@@ -28,8 +32,21 @@ const errorHandler = (error, request, response, next) => {
     next(error)
 }
 
+// Middleware for extracting token from the request header
+const tokenExtractor = (request, response, next) => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+        request.token = authorization.replace('Bearer ', '')
+    }
+    else {
+        request.token = null
+    }
+    next()
+}
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
-    errorHandler
+    errorHandler,
+    tokenExtractor
 }

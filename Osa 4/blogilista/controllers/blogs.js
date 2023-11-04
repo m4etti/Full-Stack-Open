@@ -4,19 +4,13 @@ require('express-async-errors')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-        return authorization.replace('Bearer ', '')
-    }
-    return null
-}
-
+// Route: GET all blogs
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', { blogs: 0 })
     response.json(blogs)
 })
 
+// Route: GET a specific blog by ID
 blogsRouter.get('/:id', async (request, response) => {
     const blog = await Blog.findById(request.params.id)
 
@@ -27,9 +21,10 @@ blogsRouter.get('/:id', async (request, response) => {
     }
 })
 
+// Route: POST a new blog
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
     if (!decodedToken.id) {
         return response.status(401).json({ error: 'token invalid' })
@@ -55,17 +50,18 @@ blogsRouter.post('/', async (request, response) => {
     }
 })
 
+// Route: DELETE a blog by ID
 blogsRouter.delete('/:id', async (request, response) => {
     const removed = await Blog.findByIdAndRemove(request.params.id)
     response.status(removed ? 204 : 400).end()
 })
 
+// Route: PUT (update) a blog's likes by ID
 blogsRouter.put('/:id', async (request, response) => {
     const likes = request.body.likes
     const id = request.params.id
 
     const updatedBlog = await Blog.findByIdAndUpdate(id, { likes }, { new: true })
-    // response.json(updatedBlog)
 
     if (updatedBlog) {
         response.json(updatedBlog)
