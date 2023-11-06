@@ -4,17 +4,16 @@ GET http://localhost:3001/api/blogs
 
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1BZXR0aSIsImlkIjoiNjU0NWUzMjNjMGVhNTY1ZmM1Mzg5NTU1IiwiaWF0IjoxNjk5MDg2MTU5fQ.w1F-Xp-5jCLItyXP66YTwXlPiBC-gGz8gavK9UoNPnM
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBMYWFrc28iLCJpZCI6IjY1NDVmZDc1ZGM4ZmNhYmY1MWE1ODA4OSIsImlhdCI6MTY5OTI2MjA0MX0.Is26T6w7gduLl10gnO7pKSaMUZKnxMnd7fajRdWc4_8
 
 {
-    "title": "MAETIN blogi nr 2",
-    "author": "Matti Voutilainen",
+    "title": "Pekan blogi nr.5",
+    "author": "Pekka Laakso",
     "url": "https://example.com",
     "likes": 100
 }
 
 ###
 
-DELETE http://localhost:3001/api/blogs/6545ff85b3e6b886bf3080a6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1BZXR0aSIsImlkIjoiNjU0NWUzMjNjMGVhNTY1ZmM1Mzg5NTU1IiwiaWF0IjoxNjk5MDg2MTU5fQ.w1F-Xp-5jCLItyXP66YTwXlPiBC-gGz8gavK9UoNPnM
+DELETE http://localhost:3001/api/blogs/6548afc1ef7a6cf9173e7f7d
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBMYWFrc28iLCJpZCI6IjY1NDVmZDc1ZGM4ZmNhYmY1MWE1ODA4OSIsImlhdCI6MTY5OTI2MjA0MX0.Is26T6w7gduLl10gnO7pKSaMUZKnxMnd7fajRdWc4_8

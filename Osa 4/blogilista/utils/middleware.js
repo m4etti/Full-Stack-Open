@@ -1,4 +1,7 @@
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
+
+
 
 // Middleware for logging incoming requests
 const requestLogger = (request, response, next) => {
@@ -44,9 +47,20 @@ const tokenExtractor = (request, response, next) => {
     next()
 }
 
+const userExtractor = (request, response, next) => {
+    if (request.token) {
+        request.user = jwt.verify(request.token, process.env.SECRET)
+    }
+    else {
+        request.user = null
+    }
+    next()
+}
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
-    tokenExtractor
+    tokenExtractor,
+    userExtractor
 }
