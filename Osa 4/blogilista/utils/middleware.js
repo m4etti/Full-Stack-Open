@@ -29,7 +29,7 @@ const errorHandler = (error, request, response, next) => {
         return response.status(400).json({ error: error.message })
     }
     else if (error.name === 'JsonWebTokenError') {
-        return response.status(400).json({ error: 'token missing or invalid' })
+        return response.status(400).json({ error: 'invalid token' })
     }
 
     next(error)
@@ -38,7 +38,7 @@ const errorHandler = (error, request, response, next) => {
 // Middleware for extracting token from the request header
 const tokenExtractor = (request, response, next) => {
     const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
+    if (authorization?.startsWith('Bearer ')) {
         request.token = authorization.replace('Bearer ', '')
     }
     else {
@@ -49,7 +49,7 @@ const tokenExtractor = (request, response, next) => {
 
 const userExtractor = (request, response, next) => {
     if (request.token) {
-        request.user = jwt.verify(request.token, process.env.SECRET)
+        request.user = jwt.verify(request.token, process.env.SECRET).id
     }
     else {
         request.user = null

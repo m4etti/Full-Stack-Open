@@ -5,11 +5,27 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
+let usersInDb = []
+let tokens = []
+
 beforeEach(async () => {
+    await User.deleteMany({})
+    await User.insertMany(helper.initialUsers)
+
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+
+    usersInDb = await helper.usersInDb()
+
+    const initialBlogs = helper.initialBlogs.map(blog => {
+        const user = usersInDb.find(user => user.username === blog.user)
+        return { ...blog, user: user.id }
+    })
+    await Blog.insertMany(initialBlogs)
+
+    tokens = await helper.getTokens(usersInDb)
 })
 
 describe('GET /api/blogs', () => {
@@ -22,33 +38,46 @@ describe('GET /api/blogs', () => {
         expect(response.body[0].id).toBeDefined()
     })
 
+    test('Empty database', async () => {
+        // Clear all blogs from the database
+        await Blog.deleteMany({})
+
+        const response = await api.get('/api/blogs')
+
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveLength(0)
+    })
+
     describe('GET /api/blogs/:id', () => {
         test('valid id', async () => {
             const blogsInDb = await helper.blogsInDb()
-            const id = blogsInDb[1].id
-            const response = await api.get(`/api/blogs/${id}`)
+            const selectedBlog = {
+                ...blogsInDb[1],
+                user: blogsInDb[1].user.toString()
+            }
+
+            const response = await api.get(`/api/blogs/${selectedBlog.id}`)
 
             expect(response.status).toBe(200)
             expect(response.headers['content-type']).toMatch(/application\/json/)
-            expect(response.body).toEqual(blogsInDb[1])
+            expect(response.body).toEqual(selectedBlog)
         })
 
         test('malformed id', async () => {
             const malformedId = '564564564'
-            const responseMalformedId = await api.get(`/api/blogs/${malformedId}`)
-            expect(responseMalformedId.status).toBe(400)
+            const response = await api.get(`/api/blogs/${malformedId}`)
+            expect(response.status).toBe(400)
+            expect(response.body.error).toBe('malformatted id')
         })
 
         test('non-existent id', async () => {
             const nonExistentId = '6540da7345d6422ea10b062e'
-            const responseNonExistentId = await api.get(`/api/blogs/${nonExistentId}`)
-            expect(responseNonExistentId.status).toBe(404)
+            const response = await api.get(`/api/blogs/${nonExistentId}`)
+            expect(response.status).toBe(404)
+            expect(response.body.error).toBe('Blog not found')
         })
     })
-
 })
-
-
 
 describe('POST /api/blogs', () => {
     test('new blog is added', async () => {
@@ -60,6 +89,7 @@ describe('POST /api/blogs', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokens[0]}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -67,8 +97,10 @@ describe('POST /api/blogs', () => {
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-        const blogs = blogsAtEnd.map(blog => blog.title)
-        expect(blogs).toContain(newBlog.title)
+        const blogs = blogsAtEnd.map(blog => {
+            return { title: blog.title, user: blog.user.toString() }
+        })
+        expect(blogs).toContainEqual({ title: newBlog.title, user: usersInDb[0].id })
     })
 
     test('if likes not given 0 likes', async () => {
@@ -77,8 +109,12 @@ describe('POST /api/blogs', () => {
             author: 'test test',
             url: 'http://test.com',
         }
+        const response = await api
 
-        const response = await api.post('/api/blogs').send(newBlog)
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokens[0]}`)
+            .send(newBlog)
+
         expect(response.body.likes).toEqual(0)
     })
 
@@ -92,11 +128,50 @@ describe('POST /api/blogs', () => {
             url: 'http://test.com',
         }
 
-        await api.post('/api/blogs').send(blogWhitoutTitle).expect(400)
-        await api.post('/api/blogs').send(blogWhitoutAuthor).expect(400)
+        await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokens[0]}`)
+            .send(blogWhitoutTitle)
+            .expect(400)
+
+        await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${tokens[0]}`)
+            .send(blogWhitoutAuthor)
+            .expect(400)
+    })
+
+    test('missing authentication returns 401', async () => {
+        const newBlog = {
+            title: 'Test blog',
+            author: 'test test',
+            url: 'http://test.com',
+            likes: 2
+        }
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+
+        expect(response.status).toBe(401)
+        expect(response.body.error).toBe('token invalid')
+    })
+
+    test('invalid authentication token returns 400', async () => {
+        const newBlog = {
+            title: 'Test blog',
+            author: 'test test',
+            url: 'http://test.com',
+            likes: 2
+        }
+        const response = await api
+            .post('/api/blogs')
+            .set('Authorization', 'Bearer INVALID_TOKEN')
+            .send(newBlog)
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('invalid token')
     })
 })
-
 
 describe('DELETE /api/blogs/:id', () => {
     test('wanted blog is removed', async () => {

@@ -4,7 +4,7 @@ GET http://localhost:3001/api/blogs
 
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBMYWFrc28iLCJpZCI6IjY1NDVmZDc1ZGM4ZmNhYmY1MWE1ODA4OSIsImlhdCI6MTY5OTI2MjA0MX0.Is26T6w7gduLl10gnO7pKSaMUZKnxMnd7fajRdWc4_8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBMYWFrc28iLCJpZCI6IjY1NDVmZDc1ZGM4ZmNhYmY1MWE1ODA4OSIsImlhdCI6MTY5OTI3NDE3N30.quzA8zhBIVWXer3Jxpx4nOSXkCqaPUUii7VUDClXJBs
 
 {
     "title": "Pekan blogi nr.5",
