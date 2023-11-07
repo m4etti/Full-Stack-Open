@@ -85,15 +85,19 @@ const invalidUserFields = async (input, error, api) => {
 }
 
 const getTokens = async (usersInDb) => {
-    const tokens = usersInDb.map((user) => {
+    const usersWithTokens = usersInDb.map((user) => {
         const userForToken = {
             username: user.username,
             id: user.id,
         }
-        return jwt.sign(userForToken, process.env.SECRET)
+        const token = jwt.sign(userForToken, process.env.SECRET)
+        return {
+            ...user,
+            token,
+        }
     })
 
-    return tokens
+    return usersWithTokens
 }
 
 

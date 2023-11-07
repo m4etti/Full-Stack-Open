@@ -9,7 +9,6 @@ const User = require('../models/user')
 const helper = require('./test_helper')
 
 let usersInDb = []
-let tokens = []
 
 beforeEach(async () => {
     await User.deleteMany({})
@@ -25,7 +24,7 @@ beforeEach(async () => {
     })
     await Blog.insertMany(initialBlogs)
 
-    tokens = await helper.getTokens(usersInDb)
+    usersInDb = await helper.getTokens(usersInDb)
 })
 
 describe('GET /api/blogs', () => {
@@ -89,7 +88,7 @@ describe('POST /api/blogs', () => {
         }
         await api
             .post('/api/blogs')
-            .set('Authorization', `Bearer ${tokens[0]}`)
+            .set('Authorization', `Bearer ${usersInDb[0].token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -112,13 +111,15 @@ describe('POST /api/blogs', () => {
         const response = await api
 
             .post('/api/blogs')
-            .set('Authorization', `Bearer ${tokens[0]}`)
+            .set('Authorization', `Bearer ${usersInDb[0].token}`)
             .send(newBlog)
 
         expect(response.body.likes).toEqual(0)
     })
 
     test('if title or author missin code 400 ', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+
         const blogWhitoutTitle = {
             author: 'test test',
             url: 'http://test.com',
@@ -130,18 +131,22 @@ describe('POST /api/blogs', () => {
 
         await api
             .post('/api/blogs')
-            .set('Authorization', `Bearer ${tokens[0]}`)
+            .set('Authorization', `Bearer ${usersInDb[0].token}`)
             .send(blogWhitoutTitle)
             .expect(400)
 
         await api
             .post('/api/blogs')
-            .set('Authorization', `Bearer ${tokens[0]}`)
+            .set('Authorization', `Bearer ${usersInDb[0].token}`)
             .send(blogWhitoutAuthor)
             .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
     })
 
     test('missing authentication returns 401', async () => {
+        const blogsAtStart = await helper.blogsInDb()
         const newBlog = {
             title: 'Test blog',
             author: 'test test',
@@ -153,10 +158,14 @@ describe('POST /api/blogs', () => {
             .send(newBlog)
 
         expect(response.status).toBe(401)
-        expect(response.body.error).toBe('token invalid')
+        expect(response.body.error).toBe('token missing or invalid')
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
     })
 
     test('invalid authentication token returns 400', async () => {
+        const blogsAtStart = await helper.blogsInDb()
         const newBlog = {
             title: 'Test blog',
             author: 'test test',
@@ -170,16 +179,22 @@ describe('POST /api/blogs', () => {
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe('invalid token')
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
     })
 })
 
 describe('DELETE /api/blogs/:id', () => {
     test('wanted blog is removed', async () => {
         const blogsAtStart = await helper.blogsInDb()
-        const id = blogsAtStart[1].id
+        const blogToDelete = blogsAtStart[1]
+
+        const user = usersInDb.find(user => user.id === blogToDelete.user.toString())
 
         await api
-            .delete(`/api/blogs/${id}`)
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', `Bearer ${user.token}`)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -191,12 +206,42 @@ describe('DELETE /api/blogs/:id', () => {
 
     test('malformed id gives 400', async () => {
         const id = '4353'
-        await api.delete(`/api/blogs/${id}`).expect(400)
+        const response = await api.delete(`/api/blogs/${id}`)
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('malformatted id')
     })
 
-    test('non-existent id gives 400', async () => {
+    test('non-existent id gives 404', async () => {
         const id = '6540da7345d6422ea10b062e'
-        await api.delete(`/api/blogs/${id}`).expect(400)
+        const response = await api.delete(`/api/blogs/${id}`)
+        expect(response.status).toBe(404)
+        expect(response.body.error).toBe('Blog not found')
+    })
+
+    test('missing authentication returns 401', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
+
+        const response = await api.delete(`/api/blogs/${blogToDelete.id}`)
+        expect(response.status).toBe(401)
+        expect(response.body.error).toBe('token missing or invalid')
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+    })
+
+    test('invalid authentication token returns 400', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
+
+        const response = await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', 'Bearer INVALID_TOKEN')
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('invalid token')
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
     })
 })
 

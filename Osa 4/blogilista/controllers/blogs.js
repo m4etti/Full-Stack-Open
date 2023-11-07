@@ -24,10 +24,8 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
 
-    console.log(request.user)
-
     if (!request.user) {
-        return response.status(401).json({ error: 'token invalid' })
+        return response.status(401).json({ error: 'token missing or invalid' })
     }
     else if (!body.author || !body.title) {
         response.status(400).json({ error: 'Author and title are required fields' })
@@ -58,7 +56,7 @@ blogsRouter.delete('/:id', async (request, response) => {
         response.status(404).json({ error: 'Blog not found' })
     }
     else if (!request.user || request.user !== blogToBeRemoved.user.toString()) {
-        return response.status(401).json({ error: 'token invalid' })
+        return response.status(401).json({ error: 'token missing or invalid' })
     }
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
