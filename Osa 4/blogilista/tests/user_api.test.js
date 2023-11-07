@@ -39,7 +39,6 @@ describe('POST /api/users', () => {
             .expect('Content-Type', /application\/json/)
 
         const usersAtEnd = await helper.usersInDb()
-        console.log(usersAtEnd)
         expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
         const usernames = usersAtEnd.map(u => u.username)
