@@ -248,11 +248,15 @@ describe('DELETE /api/blogs/:id', () => {
 describe('PUT /api/blogs/:id', () => {
     test('wanted blog is edited', async () => {
         const blogsAtStart = await helper.blogsInDb()
-        const id = blogsAtStart[1].id
+        const blogToUpdate = blogsAtStart[1]
+        const user = usersInDb.find(user => user.id === blogToUpdate.user.toString())
+
+        const id = blogToUpdate.id
         const likes = { likes: 100000 }
 
         await api
             .put(`/api/blogs/${id}`)
+            .set('Authorization', `Bearer ${user.token}`)
             .send(likes)
             .expect(200)
 
@@ -265,17 +269,62 @@ describe('PUT /api/blogs/:id', () => {
     test('malformed id gives 400', async () => {
         const id = '4353'
         const likes = { likes: 100000 }
-        await api.put(`/api/blogs/${id}`)
+
+        const response = await api
+            .put(`/api/blogs/${id}`)
             .send(likes)
-            .expect(400)
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('malformatted id')
     })
 
     test('non-existent id gives 400', async () => {
         const id = '6540da7345d6422ea10b062e'
         const likes = { likes: 100000 }
-        await api.put(`/api/blogs/${id}`)
+
+        const response = await api
+            .put(`/api/blogs/${id}`)
             .send(likes)
-            .expect(404)
+
+        expect(response.status).toBe(404)
+        expect(response.body.error).toBe('Blog not found')
+    })
+
+    test('missing authentication returns 401', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[1]
+        const likes = { likes: 100000 }
+
+        const response = await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(likes)
+
+        expect(response.status).toBe(401)
+        expect(response.body.error).toBe('token missing or invalid')
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+        expect(blogsAtEnd[1].likes).toEqual(blogToUpdate.likes)
+    })
+
+    test('invalid authentication token returns 400', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[1]
+        const likes = { likes: 100000 }
+
+        const response = await api
+            .delete(`/api/blogs/${blogToUpdate.id}`)
+            .set('Authorization', 'Bearer INVALID_TOKEN')
+            .send(likes)
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('invalid token')
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+        expect(blogsAtEnd[1].likes).toEqual(blogToUpdate.likes)
     })
 })
 
