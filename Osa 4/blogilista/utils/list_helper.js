@@ -4,6 +4,7 @@ const dummy = () => {
     return 1
 }
 
+// Function to calculate the total number of likes for all blogs
 const totalLikes = (blogs) => {
     const reducer = (sum, blog) => {
         return sum + blog.likes
@@ -12,6 +13,7 @@ const totalLikes = (blogs) => {
     return blogs.reduce(reducer, 0)
 }
 
+// Function to find the blog with the most likes
 const favoriteBlog = (blogs) => {
     if (blogs.length === 0) {
         return null
@@ -24,7 +26,6 @@ const favoriteBlog = (blogs) => {
                 return favorite
             }
         }
-
         const initialFavorite = { title: '', author: '', likes: 0 }
         const { title, author, likes } = blogs.reduce(reducer, initialFavorite)
         const favorite = { title, author, likes }
@@ -33,6 +34,7 @@ const favoriteBlog = (blogs) => {
     }
 }
 
+// Function to find the author with the most blogs
 const mostBlogs = (blogs) => {
     if (blogs.length === 0) {
         return null
@@ -43,6 +45,7 @@ const mostBlogs = (blogs) => {
     }
 }
 
+// Function to find the author with the most total likes on their blogs
 const mostLikes = (blogs) => {
     if (blogs.length === 0) {
         return null

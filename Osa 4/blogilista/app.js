@@ -47,5 +47,4 @@ app.use(middleware.unknownEndpoint)
 // Handling errors in the application
 app.use(middleware.errorHandler)
 
-
 module.exports = app

@@ -2,7 +2,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-
+// Initial data for testing purposes
 const initialBlogs = [
     {
         title: 'React patterns',
@@ -47,7 +47,6 @@ const initialBlogs = [
         user: 'admin'
     }
 ]
-
 const initialUsers = [
     {
         username: 'root',
@@ -61,6 +60,7 @@ const initialUsers = [
     }
 ]
 
+// Function to retrieve blogs from the database and return them as JSON
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
@@ -71,6 +71,7 @@ const usersInDb = async () => {
     return users.map(user => user.toJSON())
 }
 
+// Function to retrieve users from the database and return them as JSON
 const invalidUserFields = async (input, error, api) => {
     const usersAtStart = await usersInDb()
     const result = await api
@@ -84,6 +85,7 @@ const invalidUserFields = async (input, error, api) => {
     expect(result.body.error).toContain(error)
 }
 
+// Function to generate JWT tokens for users in the database
 const getTokens = async (usersInDb) => {
     const usersWithTokens = usersInDb.map((user) => {
         const userForToken = {

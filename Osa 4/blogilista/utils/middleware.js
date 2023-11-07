@@ -1,8 +1,6 @@
 const logger = require('./logger')
 const jwt = require('jsonwebtoken')
 
-
-
 // Middleware for logging incoming requests
 const requestLogger = (request, response, next) => {
     logger.info('Method:', request.method)
@@ -47,6 +45,7 @@ const tokenExtractor = (request, response, next) => {
     next()
 }
 
+// Middleware for extracting user data from the request headers token
 const userExtractor = (request, response, next) => {
     if (request.token) {
         request.user = jwt.verify(request.token, process.env.SECRET).id
