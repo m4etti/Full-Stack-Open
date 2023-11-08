@@ -5,6 +5,7 @@ import blogService from './services/blogs'
 import Login from './components/Login'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import CreateNew from './components/CreateNew'
 
 const App = () => {
     // State hooks for managing application data
@@ -13,13 +14,43 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
     const [message, setMessage] = useState({ text: '', type: '' })
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setUrl] = useState('')
 
-    // Effect hook for initializing blogs
+    // State hook for managing the need to refresh data from the server
+    const [refreshNeeded, setRefreshNeeded] = useState(true)
+
+
+    const newBlog = {
+        title: title,
+        author: author,
+        url: url,
+        setTitle: (newTitle) => setTitle(newTitle),
+        setAuthor: (newAuthor) => setAuthor(newAuthor),
+        setUrl: (newUrl) => setUrl(newUrl),
+        clear: () => {
+            setTitle('')
+            setAuthor('')
+            setUrl('')
+        }
+    }
+
+    // Effect hook for initializing blogs data or refreshing it when needed
     useEffect(() => {
-        blogService.getAll().then(blogs =>
-            setBlogs(blogs)
-        )
-    }, [])
+        if (refreshNeeded) {
+            (async () => {
+                try {
+                    const blogsFromDb = await blogService.getAll()
+                    setBlogs(blogsFromDb)
+                } catch (error) {
+                    console.error('Error fetching data:', error)
+                } finally {
+                    setRefreshNeeded(false)
+                }
+            })()
+        }
+    }, [refreshNeeded])
 
     // Effect hook to get user from local storage
     useEffect(() => {
@@ -51,10 +82,10 @@ const App = () => {
             setUser(user)
             setUsername('')
             setPassword('')
-            setNotification({ text: 'logged in', type: 'success' })
+            setNotification({ text: `Welcome back ${user.name}`, type: 'success' })
 
         } catch (exception) {
-            setNotification({ text: 'error logging in', type: 'error' })
+            setNotification({ text: 'Wrong username or password!', type: 'error' })
         }
     }
 
@@ -62,6 +93,30 @@ const App = () => {
         window.localStorage.removeItem('loggedNoteappUser')
         setUser(null)
     })
+
+    const postNewBlog = async (event) => {
+        event.preventDefault()
+        try {
+            const blogToSend = {
+                title: newBlog.title,
+                author: newBlog.author,
+                url: newBlog.url
+            }
+            console.log('Creating new blog entry')
+
+            await blogService.create(blogToSend, user.token)
+            newBlog.clear()
+            setRefreshNeeded(true)
+
+            setNotification({ text: `New blog ${blogToSend.title} by ${blogToSend.author} added.`, type: 'success' })
+            console.log('New blog entry created')
+        }
+        catch (error) {
+            setNotification({ text: error.response.data.error, type: 'error' })
+            console.log(error.response.data)
+        }
+    }
+
 
     // JSX rendering of the application components
     return (
@@ -79,7 +134,12 @@ const App = () => {
             <Notification message={message} />
             {user && (
                 <div>
-                    <h2>blogs</h2>
+                    <CreateNew
+                        handleSubmit={postNewBlog}
+                        newBlog={newBlog}
+                    />
+
+                    <h2>Blogs</h2>
                     {blogs.map(blog =>
                         <Blog key={blog.id} blog={blog} />
                     )}
