@@ -1,4 +1,29 @@
-const CreateNew = ({ handleSubmit, newBlog }) => {
+import { useState } from 'react'
+
+const CreateNew = ({ createNewBlog }) => {
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setUrl] = useState('')
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        createNewBlog(newBlog)
+    }
+
+    const newBlog = {
+        title: title,
+        author: author,
+        url: url,
+        setTitle: (newTitle) => setTitle(newTitle),
+        setAuthor: (newAuthor) => setAuthor(newAuthor),
+        setUrl: (newUrl) => setUrl(newUrl),
+        clear: () => {
+            setTitle('')
+            setAuthor('')
+            setUrl('')
+        }
+    }
+
     return (
         <div>
             <h2>Create new entry for bloglist</h2>

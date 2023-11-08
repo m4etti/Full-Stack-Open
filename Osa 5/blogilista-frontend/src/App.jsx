@@ -15,28 +15,14 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
     const [message, setMessage] = useState({ text: '', type: '' })
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
+
 
     // State hook for managing the need to refresh data from the server
     const [refreshNeeded, setRefreshNeeded] = useState(true)
 
     const createNewRef = useRef()
 
-    const newBlog = {
-        title: title,
-        author: author,
-        url: url,
-        setTitle: (newTitle) => setTitle(newTitle),
-        setAuthor: (newAuthor) => setAuthor(newAuthor),
-        setUrl: (newUrl) => setUrl(newUrl),
-        clear: () => {
-            setTitle('')
-            setAuthor('')
-            setUrl('')
-        }
-    }
+
 
     // Effect hook for initializing blogs data or refreshing it when needed
     useEffect(() => {
@@ -97,8 +83,7 @@ const App = () => {
     })
 
     // Function to add new entry to bloglist
-    const postNewBlog = async (event) => {
-        event.preventDefault()
+    const postNewBlog = async (newBlog) => {
         try {
             const blogToSend = {
                 title: newBlog.title,
@@ -142,10 +127,7 @@ const App = () => {
             {user && (
                 <div>
                     <Togglable buttonLabel='New' ref={createNewRef}>
-                        <CreateNew
-                            handleSubmit={postNewBlog}
-                            newBlog={newBlog}
-                        />
+                        <CreateNew createNewBlog={postNewBlog} />
                     </Togglable>
 
                     <h2>Blogs</h2>
