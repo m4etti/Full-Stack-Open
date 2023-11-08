@@ -25,7 +25,7 @@ const CreateNew = ({ handleSubmit, newBlog }) => {
                     Url:{' '}
                     <input
                         type="text"
-                        value={newBlog.Url}
+                        value={newBlog.url}
                         name="Url"
                         onChange={({ target }) => newBlog.setUrl(target.value)}
                     />

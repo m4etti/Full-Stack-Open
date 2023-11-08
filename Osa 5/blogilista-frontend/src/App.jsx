@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
@@ -6,6 +6,7 @@ import Login from './components/Login'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import CreateNew from './components/CreateNew'
+import Togglable from './components/Togglable'
 
 const App = () => {
     // State hooks for managing application data
@@ -21,6 +22,7 @@ const App = () => {
     // State hook for managing the need to refresh data from the server
     const [refreshNeeded, setRefreshNeeded] = useState(true)
 
+    const createNewRef = useRef()
 
     const newBlog = {
         title: title,
@@ -94,6 +96,7 @@ const App = () => {
         setUser(null)
     })
 
+    // Function to add new entry to bloglist
     const postNewBlog = async (event) => {
         event.preventDefault()
         try {
@@ -104,18 +107,22 @@ const App = () => {
             }
             console.log('Creating new blog entry')
 
+            createNewRef.current.toggleVisibility()
             await blogService.create(blogToSend, user.token)
             newBlog.clear()
             setRefreshNeeded(true)
+
 
             setNotification({ text: `New blog ${blogToSend.title} by ${blogToSend.author} added.`, type: 'success' })
             console.log('New blog entry created')
         }
         catch (error) {
+            console.log('jotain meni vituiks')
             setNotification({ text: error.response.data.error, type: 'error' })
             console.log(error.response.data)
         }
     }
+
 
 
     // JSX rendering of the application components
@@ -134,10 +141,12 @@ const App = () => {
             <Notification message={message} />
             {user && (
                 <div>
-                    <CreateNew
-                        handleSubmit={postNewBlog}
-                        newBlog={newBlog}
-                    />
+                    <Togglable buttonLabel='New' ref={createNewRef}>
+                        <CreateNew
+                            handleSubmit={postNewBlog}
+                            newBlog={newBlog}
+                        />
+                    </Togglable>
 
                     <h2>Blogs</h2>
                     {blogs.map(blog =>
