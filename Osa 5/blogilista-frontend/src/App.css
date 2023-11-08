@@ -1,0 +1,74 @@
+/* styling for dark mode look */
+
+body {
+    background-color: #1e1e1e;
+    /* Dark background color */
+    color: #ffffff;
+    /* Light text color */
+}
+
+a {
+    color: #66b3ff;
+    /* Link color */
+}
+
+a:hover {
+    color: #ffcc00;
+    /* Link color on hover */
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #ffffff;
+    /* Heading text color */
+}
+
+/* Paragraphs and other text elements */
+p,
+span,
+div {
+    color: #ffffff;
+    /* Text color */
+}
+
+/* Background color for specific elements */
+.container {
+    background-color: #1e1e1e;
+    /* Dark container background color */
+}
+
+/* Input fields and textareas */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    background-color: #333333;
+    /* Dark input background color */
+    color: #ffffff;
+    /* Light text color in inputs */
+}
+
+/* Buttons */
+button {
+    background-color: #333333;
+    /* Dark button background color */
+    color: #ffffff;
+    /* Light text color on buttons */
+}
+
+button:hover {
+    background-color: #555555;
+    /* Button background color on hover */
+}
+
+/* Borders */
+hr,
+.bordered-element {
+    border-color: #333333;
+    /* Border color */
+}
