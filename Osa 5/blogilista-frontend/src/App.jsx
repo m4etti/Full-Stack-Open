@@ -7,17 +7,27 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 
 const App = () => {
+    // State hooks for managing application data
     const [blogs, setBlogs] = useState([])
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
     const [message, setMessage] = useState({ text: '', type: '' })
 
-
+    // Effect hook for initializing blogs
     useEffect(() => {
         blogService.getAll().then(blogs =>
             setBlogs(blogs)
         )
+    }, [])
+
+    // Effect hook to get user from local storage
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+        if (loggedUserJSON) {
+            const loggedUser = JSON.parse(loggedUserJSON)
+            setUser(loggedUser)
+        }
     }, [])
 
     // Function for displaying notifications with a timeout
@@ -28,12 +38,16 @@ const App = () => {
         }, 5000)
     }
 
+    // Function to handle login
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
             const user = await loginService.login({
                 username, password,
             })
+            window.localStorage.setItem(
+                'loggedNoteappUser', JSON.stringify(user)
+            )
             setUser(user)
             setUsername('')
             setPassword('')
@@ -44,19 +58,24 @@ const App = () => {
         }
     }
 
+    const logOut = () => (() => {
+        window.localStorage.removeItem('loggedNoteappUser')
+        setUser(null)
+    })
+
+    // JSX rendering of the application components
     return (
         <div>
             <h1>Bloglist</h1>
-            {user && <p>{user.name}</p>}
-            {!user && (
-                <Login
-                    handleLogin={handleLogin}
-                    username={username}
-                    password={password}
-                    setUsername={setUsername}
-                    setPassword={setPassword}
-                />)
-            }
+            <Login
+                logOut={logOut}
+                user={user}
+                handleLogin={handleLogin}
+                username={username}
+                password={password}
+                setUsername={setUsername}
+                setPassword={setPassword}
+            />
             <Notification message={message} />
             {user && (
                 <div>
