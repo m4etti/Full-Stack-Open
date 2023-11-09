@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const Notification = ({ message }) => {
     const styleBase = {
         background: '#333333',
@@ -27,6 +29,13 @@ const Notification = ({ message }) => {
             {message.text}
         </div>
     )
+}
+
+Notification.propTypes = {
+    message: PropTypes.shape({
+        type: PropTypes.oneOf(['success', 'error', '']).isRequired,
+        text: PropTypes.string.isRequired
+    }).isRequired
 }
 
 export default Notification

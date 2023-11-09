@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import Blog from './Blog'
 
 const Bloglist = ({ blogs, addLike, user, removeBlog }) => {
@@ -10,6 +11,26 @@ const Bloglist = ({ blogs, addLike, user, removeBlog }) => {
             )}
         </div>
     )
+}
+
+Bloglist.propTypes = {
+    blogs: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            title: PropTypes.string.isRequired,
+            url: PropTypes.string.isRequired,
+            likes: PropTypes.number.isRequired,
+            author: PropTypes.string.isRequired,
+            user: PropTypes.shape({
+                username: PropTypes.string.isRequired,
+            }).isRequired,
+        })
+    ).isRequired,
+    addLike: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+    }).isRequired,
+    removeBlog: PropTypes.func.isRequired,
 }
 
 export default Bloglist

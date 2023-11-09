@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import Togglable from './Togglable'
 
 const Blog = ({ blog, addLike, user, removeBlog }) => {
@@ -28,6 +29,23 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
             </Togglable>
         </div>
     )
+}
+
+Blog.propTypes = {
+    blog: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        url: PropTypes.string.isRequired,
+        likes: PropTypes.number.isRequired,
+        author: PropTypes.string.isRequired,
+        user: PropTypes.shape({
+            username: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
+    addLike: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+    }).isRequired,
+    removeBlog: PropTypes.func.isRequired,
 }
 
 export default Blog
