@@ -123,7 +123,20 @@ const App = () => {
         }
     }
 
+    const removeBlog = async (blog) => {
+        try {
+            console.log(`Removing blog: ${blog.title}`)
 
+            await blogService.remove(blog, user.token)
+            setRefreshNeeded(true)
+
+            setNotification({ text: `Deleted blog: ${blog.title}`, type: 'success' })
+            console.log('Blog removed')
+        } catch (error) {
+            setNotification({ text: error.response.data.error, type: 'error' })
+            console.log(error.response.data)
+        }
+    }
 
 
     // JSX rendering of the application components
@@ -145,7 +158,7 @@ const App = () => {
                     <Togglable buttonLabel='New' ref={createNewRef}>
                         <CreateNew createNewBlog={postNewBlog} />
                     </Togglable>
-                    <BlogList blogs={blogs} addLike={addLike} />
+                    <BlogList blogs={blogs} addLike={addLike} removeBlog={removeBlog} user={user} />
                 </div>
             )}
         </div>
