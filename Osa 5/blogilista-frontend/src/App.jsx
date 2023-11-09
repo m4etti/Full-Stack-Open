@@ -102,11 +102,27 @@ const App = () => {
             console.log('New blog entry created')
         }
         catch (error) {
-            console.log('jotain meni vituiks')
             setNotification({ text: error.response.data.error, type: 'error' })
             console.log(error.response.data)
         }
     }
+
+    const addLike = async (blog) => {
+        try {
+            console.log(`Add like to ${blog.title}`)
+
+            await blogService.like(blog, user.token)
+            setRefreshNeeded(true)
+
+            setNotification({ text: `Liked blog: ${blog.title}`, type: 'success' })
+            console.log('Blog Likked')
+        }
+        catch (error) {
+            setNotification({ text: error.response.data.error, type: 'error' })
+            console.log(error.response.data)
+        }
+    }
+
 
 
 
@@ -132,7 +148,7 @@ const App = () => {
 
                     <h2>Blogs</h2>
                     {blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} />
+                        <Blog key={blog.id} blog={blog} addLike={addLike} />
                     )}
                 </div>
             )}

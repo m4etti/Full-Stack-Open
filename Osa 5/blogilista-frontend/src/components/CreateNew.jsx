@@ -24,12 +24,24 @@ const CreateNew = ({ createNewBlog }) => {
         }
     }
 
+    const formInputStyle = {
+        marginBottom: '5px',
+        marginLeft: '5px',
+        display: 'flex',
+        alignItems: 'center',
+    }
+
+    const formLabelStyle = {
+        width: '50px',
+        marginRight: '10px'
+    }
+
     return (
-        <div>
+        <div style={{ marginBottom: '10px' }}>
             <h2>Create new entry for bloglist</h2>
             <form onSubmit={handleSubmit}>
-                <div>
-                    Title:{' '}
+                <div style={formInputStyle}>
+                    <label style={formLabelStyle}>Title:</label>
                     <input
                         type="text"
                         value={newBlog.title}
@@ -37,8 +49,8 @@ const CreateNew = ({ createNewBlog }) => {
                         onChange={({ target }) => newBlog.setTitle(target.value)}
                     />
                 </div>
-                <div>
-                    Author:{' '}
+                <div style={formInputStyle}>
+                    <label style={formLabelStyle}>Author:</label>
                     <input
                         type="text"
                         value={newBlog.author}
@@ -46,8 +58,8 @@ const CreateNew = ({ createNewBlog }) => {
                         onChange={({ target }) => newBlog.setAuthor(target.value)}
                     />
                 </div>
-                <div>
-                    Url:{' '}
+                <div style={formInputStyle}>
+                    <label style={formLabelStyle}>Url:</label>
                     <input
                         type="text"
                         value={newBlog.url}
