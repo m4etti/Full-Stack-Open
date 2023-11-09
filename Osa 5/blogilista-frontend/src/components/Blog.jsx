@@ -24,7 +24,7 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
             {usersBlog && <button style={deleteButtonStyle} onClick={() => removeBlog(blog)}>Delete</button>}
             <Togglable buttonLabel={'View'} cancelLabel={'hide'}>
                 <p>{blog.url}</p>
-                <p>{blog.likes} <button onClick={() => addLike(blog)}>Like</button></p>
+                <p>Likes:{` ${blog.likes}`} <button onClick={() => addLike(blog)}>Like</button></p>
                 <p>{blog.author}</p>
             </Togglable>
         </div>
