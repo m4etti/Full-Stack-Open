@@ -1,28 +1,15 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { useState, useImperativeHandle, forwardRef } from 'react'
 
-const CreateNew = ({ createNewBlog }) => {
+
+const CreateNew = forwardRef(({ createNewBlog }, ref) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        createNewBlog(newBlog)
-    }
-
-    const newBlog = {
-        title: title,
-        author: author,
-        url: url,
-        setTitle: (newTitle) => setTitle(newTitle),
-        setAuthor: (newAuthor) => setAuthor(newAuthor),
-        setUrl: (newUrl) => setUrl(newUrl),
-        clear: () => {
-            setTitle('')
-            setAuthor('')
-            setUrl('')
-        }
+        createNewBlog(title, author, url)
     }
 
     const formInputStyle = {
@@ -37,45 +24,58 @@ const CreateNew = ({ createNewBlog }) => {
         marginRight: '10px'
     }
 
+    useImperativeHandle(ref, () => {
+        return {
+            setTitle,
+            setAuthor,
+            setUrl
+        }
+    })
+
     return (
         <div style={{ marginBottom: '10px' }}>
             <h2>Create new entry for bloglist</h2>
             <form onSubmit={handleSubmit}>
                 <div style={formInputStyle}>
-                    <label style={formLabelStyle}>Title:</label>
+                    <label style={formLabelStyle} htmlFor="titleInput">Title:</label>
                     <input
+                        id="titleInput"
                         type="text"
-                        value={newBlog.title}
+                        value={title}
                         name="Title"
-                        onChange={({ target }) => newBlog.setTitle(target.value)}
+                        onChange={({ target }) => setTitle(target.value)}
                     />
                 </div>
                 <div style={formInputStyle}>
-                    <label style={formLabelStyle}>Author:</label>
+                    <label style={formLabelStyle} htmlFor="authorInput">Author:</label>
                     <input
+                        id="authorInput"
                         type="text"
-                        value={newBlog.author}
+                        value={author}
                         name="Author"
-                        onChange={({ target }) => newBlog.setAuthor(target.value)}
+                        onChange={({ target }) => setAuthor(target.value)}
                     />
                 </div>
                 <div style={formInputStyle}>
-                    <label style={formLabelStyle}>Url:</label>
+                    <label style={formLabelStyle} htmlFor="urlInput">Url:</label>
                     <input
+                        id="urlInput"
                         type="text"
-                        value={newBlog.url}
+                        value={url}
                         name="Url"
-                        onChange={({ target }) => newBlog.setUrl(target.value)}
+                        onChange={({ target }) => setUrl(target.value)}
                     />
                 </div>
                 <button type="submit">Create</button>
             </form>
         </div>
     )
-}
+})
 
 CreateNew.propTypes = {
     createNewBlog: PropTypes.func.isRequired
 }
+
+CreateNew.displayName = 'CreateNew'
 
 export default CreateNew

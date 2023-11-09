@@ -20,7 +20,8 @@ const App = () => {
     // State hook for managing the need to refresh data from the server
     const [refreshNeeded, setRefreshNeeded] = useState(true)
 
-    const createNewRef = useRef()
+    const createNewVisibleRef = useRef()
+    const createNewStateRef = useRef()
 
 
 
@@ -83,18 +84,21 @@ const App = () => {
     })
 
     // Function to add new entry to bloglist
-    const postNewBlog = async (newBlog) => {
+    const postNewBlog = async (title, author, url) => {
         try {
             const blogToSend = {
-                title: newBlog.title,
-                author: newBlog.author,
-                url: newBlog.url
+                title: title,
+                author: author,
+                url: url
             }
+            console.log(blogToSend)
             console.log('Creating new blog entry')
 
-            createNewRef.current.toggleVisibility()
+            createNewVisibleRef.current.toggleVisibility()
             await blogService.create(blogToSend, user.token)
-            newBlog.clear()
+            createNewStateRef.current.setTitle('')
+            createNewStateRef.current.setAuthor('')
+            createNewStateRef.current.setUrl('')
             setRefreshNeeded(true)
 
 
@@ -155,10 +159,15 @@ const App = () => {
             <Notification message={message} />
             {user && (
                 <div>
-                    <Togglable buttonLabel='New' ref={createNewRef}>
-                        <CreateNew createNewBlog={postNewBlog} />
+                    <Togglable buttonLabel='New' ref={createNewVisibleRef}>
+                        <CreateNew createNewBlog={postNewBlog} ref={createNewStateRef} />
                     </Togglable>
-                    <BlogList blogs={blogs} addLike={addLike} removeBlog={removeBlog} user={user} />
+                    <BlogList
+                        blogs={blogs}
+                        addLike={addLike}
+                        removeBlog={removeBlog}
+                        user={user}
+                    />
                 </div>
             )}
         </div>
