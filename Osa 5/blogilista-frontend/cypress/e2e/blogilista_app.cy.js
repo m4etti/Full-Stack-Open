@@ -34,5 +34,26 @@ describe('Bloglist app', function () {
         })
     })
 
+    describe('When logged in', function () {
+        beforeEach(function () {
+            cy.get('#usernameInput').type('mluukkai')
+            cy.get('#passwordInput').type('salainen')
+            cy.get('#loginButton').click()
+
+            cy.contains('Welcome back Matti Luukkainen')
+            cy.contains('Blogs')
+        })
+
+        it('A blog can be created', function () {
+            cy.get('#togglableCreateNewNewButton').click()
+            cy.get('#titleInput').type('testi blogi')
+            cy.get('#authorInput').type('testaaja')
+            cy.get('#urlInput').type('test url')
+            cy.get('#createButton').click()
+
+            cy.contains('testi blogi')
+        })
+    })
+
 })
 

@@ -159,10 +159,11 @@ const App = () => {
             <Notification message={message} />
             {user && (
                 <div>
-                    <Togglable buttonLabel='New' ref={createNewVisibleRef}>
+                    <Togglable id='togglableCreateNew' buttonLabel='New' ref={createNewVisibleRef}>
                         <CreateNew createNewBlog={postNewBlog} ref={createNewStateRef} />
                     </Togglable>
                     <BlogList
+                        id='bloglist'
                         blogs={blogs}
                         addLike={addLike}
                         removeBlog={removeBlog}
