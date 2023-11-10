@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import Togglable from './Togglable'
 
-const Blog = ({ blog, addLike, user, removeBlog }) => {
+const Blog = ({ key, blog, addLike, user, removeBlog }) => {
     const divStyle = {
         border: '1px solid white',
         padding: '10px',
@@ -24,7 +24,7 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
             {usersBlog && <button style={deleteButtonStyle} onClick={() => removeBlog(blog)}>Delete</button>}
             <Togglable buttonLabel={'View'} cancelLabel={'hide'}>
                 <p>{blog.url}</p>
-                <p>Likes:{` ${blog.likes}`} <button onClick={() => addLike(blog)}>Like</button></p>
+                <p>Likes:{` ${blog.likes}`} <button id={`likeButton${key}`} onClick={() => addLike(blog)}>Like</button></p>
                 <p>{blog.author}</p>
             </Togglable>
         </div>
@@ -32,6 +32,7 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
 }
 
 Blog.propTypes = {
+    key: PropTypes.string.isRequired,
     blog: PropTypes.shape({
         title: PropTypes.string.isRequired,
         url: PropTypes.string.isRequired,

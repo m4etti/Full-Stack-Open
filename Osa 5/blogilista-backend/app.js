@@ -41,6 +41,12 @@ app.use(
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
+// Route for testing
+if (process.env.NODE_ENV === 'test') {
+    const testingRouter = require('./controllers/testing')
+    app.use('/api/testing', testingRouter)
+}
+
 // Handling unknown endpoints
 app.use(middleware.unknownEndpoint)
 
