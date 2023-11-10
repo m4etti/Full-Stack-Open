@@ -22,7 +22,9 @@ describe('Bloglist app', function () {
             cy.get('#passwordInput').type('salainen')
             cy.get('#loginButton').click()
 
-            cy.contains('Welcome back Matti Luukkainen')
+            cy.get('#notification')
+                .contains('Welcome back Matti Luukkainen')
+                .should('have.css', 'color', 'rgb(0, 128, 0)')
         })
 
         it('Fails with wrong credentials', function () {
@@ -30,7 +32,9 @@ describe('Bloglist app', function () {
             cy.get('#passwordInput').type('wrongPassword')
             cy.get('#loginButton').click()
 
-            cy.contains('Wrong username or password!')
+            cy.get('#notification')
+                .contains('Wrong username or password!')
+                .should('have.css', 'color', 'rgb(255, 0, 0)')
         })
     })
 
@@ -46,7 +50,7 @@ describe('Bloglist app', function () {
             cy.get('#urlInput').type('test url')
             cy.get('#createButton').click()
 
-            cy.contains('testi blogi')
+            cy.get('#blogList').find('div').contains('testi blogi')
         })
 
         it('Blog can be liked', function () {
@@ -70,8 +74,11 @@ describe('Bloglist app', function () {
         it('Blog can be deleted by it\'s creator', function () {
             cy.createBlog({ title: 'testi blogi', author: 'testaaja', url: 'test url' })
 
-            cy.get('#blogList').find('div').contains('testi blogi').as('blogDiv')
-            cy.get('@blogDiv').find('#deleteButton').click()
+            cy.get('#blogList')
+                .find('div')
+                .contains('testi blogi')
+                .find('#deleteButton')
+                .click()
 
             cy.get('#blogList').should('not.contain', 'testi blogi')
         })
@@ -88,8 +95,11 @@ describe('Bloglist app', function () {
             cy.request('POST', `${Cypress.env('BACKEND')}/users`, anotherUser)
             cy.login({ username: 'PeKKo', password: 'salainen' })
 
-            cy.get('#blogList').find('div').contains('testi blogi').as('blogDiv')
-            cy.get('@blogDiv').find('#deleteButton').should('not.exist')
+            cy.get('#blogList')
+                .find('div')
+                .contains('testi blogi')
+                .find('#deleteButton')
+                .should('not.exist')
 
         })
     })

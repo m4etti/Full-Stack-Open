@@ -25,7 +25,7 @@ const Notification = ({ message }) => {
         error: styleError
     }
     return (
-        <div style={styles[message.type]}>
+        <div id='notification' style={styles[message.type]}>
             {message.text}
         </div>
     )
