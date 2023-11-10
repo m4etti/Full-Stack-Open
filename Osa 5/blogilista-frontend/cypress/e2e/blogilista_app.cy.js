@@ -16,12 +16,23 @@ describe('Bloglist app', function () {
         cy.get('body').should('not.contain', 'Blogs')
     })
 
-    it('user can login', function () {
-        cy.get('#usernameInput').type('mluukkai')
-        cy.get('#passwordInput').type('salainen')
-        cy.get('#loginButton').click()
+    describe('Login', function () {
+        it('Succeeds with correct credentials', function () {
+            cy.get('#usernameInput').type('mluukkai')
+            cy.get('#passwordInput').type('salainen')
+            cy.get('#loginButton').click()
 
-        cy.contains('Welcome back Matti Luukkainen')
+            cy.contains('Welcome back Matti Luukkainen')
+        })
+
+        it('Fails with wrong credentials', function () {
+            cy.get('#usernameInput').type('wrongUser')
+            cy.get('#passwordInput').type('wrongPassword')
+            cy.get('#loginButton').click()
+
+            cy.contains('Wrong username or password!')
+        })
     })
+
 })
 
