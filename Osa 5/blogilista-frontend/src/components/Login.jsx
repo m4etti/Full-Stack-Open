@@ -7,7 +7,7 @@ const Login = ({ user, logOut, handleLogin, username, password, setUsername, set
             {user && (
                 <p>
                     {`${user.name} `}
-                    <button onClick={logOut()}>Logout</button>
+                    <button id='logoutButton' onClick={logOut()}>Logout</button>
                 </p>
             )}
             {!user && (

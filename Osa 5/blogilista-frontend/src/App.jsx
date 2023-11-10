@@ -43,7 +43,7 @@ const App = () => {
 
     // Effect hook to get user from local storage
     useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+        const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
         if (loggedUserJSON) {
             const loggedUser = JSON.parse(loggedUserJSON)
             setUser(loggedUser)
@@ -66,7 +66,7 @@ const App = () => {
                 username, password,
             })
             window.localStorage.setItem(
-                'loggedNoteappUser', JSON.stringify(user)
+                'loggedBloglistappUser', JSON.stringify(user)
             )
             setUser(user)
             setUsername('')
@@ -79,7 +79,7 @@ const App = () => {
     }
 
     const logOut = () => (() => {
-        window.localStorage.removeItem('loggedNoteappUser')
+        window.localStorage.removeItem('loggedBloglistappUser')
         setUser(null)
     })
 
