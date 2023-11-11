@@ -100,9 +100,19 @@ describe('Bloglist app', function () {
                 .contains('testi blogi')
                 .find('#deleteButton')
                 .should('not.exist')
+        })
 
+        it.only('Blogs are ordered correctly based on likes', function () {
+            cy.createBlog({ title: 'testi blogi 1', author: 'testaaja', url: 'test url' })
+            cy.createBlog({ title: 'testi blogi 2', author: 'testaaja', url: 'test url' })
+            cy.createBlog({ title: 'testi blogi 3', author: 'testaaja', url: 'test url' })
+            cy.addLikes('testi blogi 2', 2)
+            cy.addLikes('testi blogi 3', 1)
+
+            cy.get('#blogNumber0').contains('testi blogi 2')
+            cy.get('#blogNumber1').contains('testi blogi 3')
+            cy.get('#blogNumber2').contains('testi blogi 1')
         })
     })
 
 })
-
