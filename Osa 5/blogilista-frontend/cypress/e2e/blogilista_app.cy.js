@@ -25,6 +25,8 @@ describe('Bloglist app', function () {
             cy.get('#notification')
                 .contains('Welcome back Matti Luukkainen')
                 .should('have.css', 'color', 'rgb(0, 128, 0)')
+
+            cy.contains('Blogs')
         })
 
         it('Fails with wrong credentials', function () {
@@ -35,6 +37,9 @@ describe('Bloglist app', function () {
             cy.get('#notification')
                 .contains('Wrong username or password!')
                 .should('have.css', 'color', 'rgb(255, 0, 0)')
+
+            cy.get('body').should('not.contain', 'Blogs')
+
         })
     })
 
@@ -102,7 +107,7 @@ describe('Bloglist app', function () {
                 .should('not.exist')
         })
 
-        it.only('Blogs are ordered correctly based on likes', function () {
+        it('Blogs are ordered correctly based on likes', function () {
             cy.createBlog({ title: 'testi blogi 1', author: 'testaaja', url: 'test url' })
             cy.createBlog({ title: 'testi blogi 2', author: 'testaaja', url: 'test url' })
             cy.createBlog({ title: 'testi blogi 3', author: 'testaaja', url: 'test url' })
