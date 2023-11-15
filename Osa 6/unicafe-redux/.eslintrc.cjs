@@ -14,7 +14,7 @@ module.exports = {
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'jest'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
@@ -22,7 +22,10 @@ module.exports = {
     ],
     'indent': [
       'error',
-      4
+      4,
+      {
+        'SwitchCase': 1,
+      }
     ],
     'linebreak-style': [
       'error',
