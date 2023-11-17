@@ -1,14 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const initialState = {
+    content: 'Welcome',
+    showNotification: true
+}
+
 const notificationSlice = createSlice({
     name: 'notification',
-    initialState: 'Welcome',
-    reducer: {
-        cahngeNotification(state, action) {
-            return action.payload
+    initialState,
+    reducers: {
+        changeNotification(state, action) {
+            state.content = action.payload
+            state.showNotification = true
+        },
+        hideNotification(state) {
+            state.showNotification = false
         }
     }
 })
 
-export const { cahngeNotification } = notificationSlice.actions
+export const { changeNotification, hideNotification } = notificationSlice.actions
 export default notificationSlice.reducer
