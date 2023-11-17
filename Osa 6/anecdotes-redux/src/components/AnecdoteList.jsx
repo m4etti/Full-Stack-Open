@@ -32,12 +32,13 @@ Anecdote.propTypes = {
 
 const AnecdoteList = () => {
     const [anecdotes, filter] = useSelector(state => {
-        console.log(state)
         return [state.anecdotes, state.filter]
     })
 
-    let filteredAnecdotes = anecdotes.filter(anecdote =>
-        anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    let filteredAnecdotes = anecdotes.filter(anecdote => {
+        return anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    }
+
     )
     filteredAnecdotes = filteredAnecdotes.sort((a, b) => b.votes - a.votes)
 
